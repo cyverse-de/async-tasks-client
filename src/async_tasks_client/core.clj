@@ -3,6 +3,7 @@
   (:require [cemerick.url :as curl]
             [cheshire.core :as json]
             [clj-http.client :as http]
+            [clojure.string :as string]
             [clojure.tools.logging :as log]))
 
 (defprotocol Client
@@ -54,32 +55,37 @@
 (def ^:private delete-options get-options)
 (def ^:private put-options post-options)
 
+(defn- normalize-id [id-or-uri]
+  (string/replace id-or-uri #".*/tasks/" ""))
+
 (deftype AsyncTasksClient [base-url]
   Client
 
   (get-by-id
     [_ id]
-    (:body (http/get (async-tasks-url base-url "tasks" id) (get-options {} :as :json))))
+    (:body (http/get (async-tasks-url base-url "tasks" (normalize-id id)) (get-options {} :as :json))))
 
   (delete-by-id
     [_ id]
-    (:body (http/delete (async-tasks-url base-url "tasks" id) (get-options {} :as :json))))
+    (:body (http/delete (async-tasks-url base-url "tasks" (normalize-id id)) (get-options {} :as :json))))
 
-  ;; XXX this is probably wrong, need to return the Location header I think
   (create-task
     [_ task]
     (->> (http/post (async-tasks-url base-url "tasks") (post-options (json/encode task) {} :as :json))
-         :body))
+         :headers
+         :location))
 
   (add-status
     [_ id status]
-    (->> (http/post (async-tasks-url base-url "tasks" id "status") (post-options (json/encode status) {} :as :json))
-         :body))
+    (->> (http/post (async-tasks-url base-url "tasks" (normalize-id id) "status") (post-options (json/encode status) {} :as :json))
+         :headers
+         :location))
 
   (add-behavior
     [_ id behavior]
-    (->> (http/post (async-tasks-url base-url "tasks" id "behaviors") (post-options (json/encode behavior) {} :as :json))
-         :body))
+    (->> (http/post (async-tasks-url base-url "tasks" (normalize-id id) "behaviors") (post-options (json/encode behavior) {} :as :json))
+         :headers
+         :location))
 
   (get-by-filter
     [_ filters]
