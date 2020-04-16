@@ -17,9 +17,15 @@
     [_ id]
     "Deletes an async task by ID")
 
+  (add-status* [_ id status complete?])
+
   (add-status
-    [_ id status]
+    [this id status]
     "Adds a status to an existing task by ID, passing in a map which specifies the new status to add.")
+
+  (add-completed-status
+    [this id status]
+    "Adds a status to an existing task by ID, passing in a map which specifies the new status to add. Additionally, completes the task.")
 
   (add-behavior
     [_ id behavior]
@@ -75,11 +81,20 @@
          :headers
          :location))
 
+  (add-status*
+    [_ id status complete?]
+    (let [params (if complete? {:complete true} {})]
+      (->> (http/post (async-tasks-url base-url "tasks" (normalize-id id) "status") (post-options (json/encode status) params :as :json))
+           :headers
+           :location)))
+
   (add-status
-    [_ id status]
-    (->> (http/post (async-tasks-url base-url "tasks" (normalize-id id) "status") (post-options (json/encode status) {} :as :json))
-         :headers
-         :location))
+    [this id status]
+    (add-status* this id status false))
+
+  (add-completed-status
+    [this id status]
+    (add-status* this id status true))
 
   (add-behavior
     [_ id behavior]
