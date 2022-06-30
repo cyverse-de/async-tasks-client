@@ -104,8 +104,7 @@
 
   (get-by-filter
     [_ filters]
-    (:body (http/get (async-tasks-url base-url "tasks") (get-options filters :as :json)))
-    ))
+    (json/parse-string (:body (http/get (async-tasks-url base-url "tasks") (get-options filters :as :string))) true)))
 
 (defn new-async-tasks-client [base-url]
   (AsyncTasksClient. base-url))
