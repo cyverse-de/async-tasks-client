@@ -5,10 +5,12 @@
             :url "http://cyverse.org/sites/default/files/iPLANT-LICENSE.txt"}
   :deploy-repositories [["releases" :clojars]
                         ["snapshots" :clojars]]
-  :plugins [[test2junit "1.2.2"]]
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [clj-http "2.0.0"]
+  :plugins [[jonase/eastwood "1.4.3"]
+            [lein-ancient "0.7.0"]
+            [test2junit "1.4.4"]]
+  :dependencies [[org.clojure/clojure "1.11.3"]
+                 [clj-http "3.13.0"]
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]]
-                 [cheshire "5.5.0"]
-                 [medley "1.0.0"]
-                 [org.cyverse/kameleon "3.0.0"]])
+                 [cheshire "5.13.0"]
+                 [medley "1.4.0"]
+                 [org.cyverse/kameleon "3.0.10"]])
