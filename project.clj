@@ -1,4 +1,4 @@
-(defproject org.cyverse/async-tasks-client "0.0.5-SNAPSHOT"
+(defproject org.cyverse/async-tasks-client "0.0.5"
   :description "Client for the async-tasks service"
   :url "https://github.com/cyverse-de/async-tasks-client"
   :license {:name "BSD"
